@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>City Health Office</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: #f4d63a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+    }
+
+    header img {
+      width: 60px;
+      height: 60px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo h1 {
+      margin-left: 10px;
+      font-size: 22px;
+      color: #0046ad;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: #f7e96d;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .hero h2 {
+      color: #0046ad;
+    }
+
+    .hero button {
+      margin-top: 15px;
+      background: transparent;
+      border: 2px solid #0046ad;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #0046ad;
+    }
+
+    .hero button:hover {
+      background: #0046ad;
+      color: white;
+    }
+
+    /* Content Section */
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .content img {
+      flex: 1;
+      max-width: 50%;
+      height: auto;
+    }
+
+    .text {
+      flex: 1;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    @media(max-width: 768px) {
+      .content {
+        flex-direction: column;
+      }
+
+      .content img, .text {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="City Health Logo">
+      <h1>CITY HEALTH OFFICE</h1>
+    </div>
+    <nav>
+      <a href="#">HOME</a>
+      <a href="#">ABOUT</a>
+      <a href="#">SERVICES</a>
+      <a href="#">CONTACT</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>asdfghjkljhsfdhshae</h2>
+    <button>APPOINTMENT</button>
+  </section>
+
+  <section class="content">
+    <img src="map.jpg" alt="Map Image">
+    <div class="text">
+      <p>
+        The City Health Office (CHO) was created under the Republic Act No. 7160 also known as the Local Government Code where in public health service was one of the national functions devolved to local government units. It is the one in charge in the delivery of health services to the community and oversees the implementation of different health programs of the Department of Health (DOH). The CHO in its own building is located at Centennial Avenue, Tunasan, Muntinlupa City. It has 15 health centers (HC) and one health station distributed in the 9 barangays of the city and is instituted depending on the population of the barangay.
+      </p>
+      <p>
+        The CHO generally manage the personnel and staff of the said office; it also coordinates with other government agencies and non-government agencies to ensure delivery of basic health care and promotion of health to the community. It also recommends to the Sangguniang Panglungsod through the Local Health Board an ordinance that will aid in the preservation and improvement of the public health.
+      </p>
+    </div>
+  </section>
+
+</body>
+</html>
