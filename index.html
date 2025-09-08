@@ -6,134 +6,165 @@
   <title>City Health Office</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      line-height: 1.6;
-    }
-
-    /* Header */
-    header {
-      background: #f4d63a;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 40px;
-    }
-
-    header img {
-      width: 60px;
-      height: 60px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-    }
-
-    .logo h1 {
-      margin-left: 10px;
-      font-size: 22px;
-      color: #0046ad;
-    }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: black;
-      font-weight: bold;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    /* Hero Section */
-    .hero {
-      background: #f7e96d;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      padding: 40px 20px;
     }
 
-    .hero h2 {
-      color: #0046ad;
-    }
-
-    .hero button {
-      margin-top: 15px;
-      background: transparent;
-      border: 2px solid #0046ad;
-      border-radius: 20px;
+    button {
       padding: 10px 20px;
+      margin: 10px;
+      border: 2px solid #007bff;
+      border-radius: 8px;
+      background: white;
+      color: #007bff;
       font-weight: bold;
       cursor: pointer;
-      color: #0046ad;
     }
-
-    .hero button:hover {
-      background: #0046ad;
+    button:hover {
+      background: #007bff;
       color: white;
     }
 
-    /* Content Section */
-    .content {
-      display: flex;
-      flex-wrap: wrap;
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
     }
 
-    .content img {
-      flex: 1;
-      max-width: 50%;
-      height: auto;
-    }
-
-    .text {
-      flex: 1;
+    .modal-content {
+      background: white;
       padding: 20px;
-      font-size: 14px;
+      border-radius: 10px;
+      width: 400px;
+      max-width: 90%;
+      text-align: left;
     }
 
-    @media(max-width: 768px) {
-      .content {
-        flex-direction: column;
-      }
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+    }
 
-      .content img, .text {
-        max-width: 100%;
-      }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .privacy {
+      font-size: 12px;
+      color: gray;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">
-      <img src="logo.png" alt="City Health Logo">
-      <h1>CITY HEALTH OFFICE</h1>
-    </div>
-    <nav>
-      <a href="#">HOME</a>
-      <a href="#">ABOUT</a>
-      <a href="#">SERVICES</a>
-      <a href="#">CONTACT</a>
-    </nav>
-  </header>
+  <h1>City Health Office</h1>
+  <button id="appointmentBtn">APPOINTMENT</button>
 
-  <section class="hero">
-    <h2>asdfghjkljhsfdhshae</h2>
-    <button>APPOINTMENT</button>
-  </section>
-
-  <section class="content">
-    <img src="map.jpg" alt="Map Image">
-    <div class="text">
-      <p>
-        The City Health Office (CHO) was created under the Republic Act No. 7160 also known as the Local Government Code where in public health service was one of the national functions devolved to local government units. It is the one in charge in the delivery of health services to the community and oversees the implementation of different health programs of the Department of Health (DOH). The CHO in its own building is located at Centennial Avenue, Tunasan, Muntinlupa City. It has 15 health centers (HC) and one health station distributed in the 9 barangays of the city and is instituted depending on the population of the barangay.
-      </p>
-      <p>
-        The CHO generally manage the personnel and staff of the said office; it also coordinates with other government agencies and non-government agencies to ensure delivery of basic health care and promotion of health to the community. It also recommends to the Sangguniang Panglungsod through the Local Health Board an ordinance that will aid in the preservation and improvement of the public health.
-      </p>
+  <!-- Main Modal -->
+  <div id="roleModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('roleModal')">&times;</span>
+      <h2>Select Your Role</h2>
+      <button onclick="openModal('clientModal')">Client</button>
+      <button onclick="openModal('adminModal')">Admin</button>
     </div>
-  </section>
+  </div>
+
+  <!-- Client Form Modal -->
+  <div id="clientModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('clientModal')">&times;</span>
+      <h2>Client Appointment Form</h2>
+      <form>
+        <label>Name:</label>
+        <input type="text" required>
+
+        <label>Age:</label>
+        <input type="number" required>
+
+        <label>Email:</label>
+        <input type="email" required>
+
+        <label>Category:</label>
+        <select required>
+          <option value="">-- Select Category --</option>
+          <option value="consultation">Consultation</option>
+          <option value="vaccination">Vaccination</option>
+          <option value="checkup">Check-up</option>
+        </select>
+
+        <label>Purpose:</label>
+        <textarea rows="3" required></textarea>
+
+        <p class="privacy">
+          By submitting this form, you agree that your data will be used for appointment scheduling purposes in compliance with the Data Privacy Act.
+        </p>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('adminModal')">&times;</span>
+      <h2>Admin Login</h2>
+      <form>
+        <label>Username:</label>
+        <input type="text" required>
+
+        <label>Password:</label>
+        <input type="password" required>
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Open Modal
+    document.getElementById("appointmentBtn").onclick = function() {
+      openModal("roleModal");
+    }
+
+    function openModal(id) {
+      document.getElementById(id).style.display = "flex";
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      let modals = document.querySelectorAll(".modal");
+      modals.forEach(modal => {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
