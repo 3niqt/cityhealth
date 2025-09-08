@@ -33,25 +33,6 @@
     }
     .buttons a:hover { background: #ddd; }
 
-    /* Appointment Choice */
-    .appointment-choice {
-      display: none;
-      background: rgba(0,0,0,0.8);
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      justify-content: center; align-items: center; z-index: 999;
-    }
-    .choice-box {
-      background: white; padding: 30px; border-radius: 10px;
-      text-align: center; width: 300px;
-    }
-    .choice-box h2 { margin-bottom: 20px; }
-    .choice-box button {
-      width: 100%; padding: 12px; margin: 10px 0;
-      border: none; border-radius: 5px;
-      background: #fcd34d; font-weight: bold; cursor: pointer;
-    }
-    .choice-box button:hover { background: #eab308; }
-
     /* Login Modal */
     .login-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -136,6 +117,16 @@
     }
     .form-container button:hover { background: #555; }
 
+    /* Privacy Notice */
+    .privacy-box {
+      font-size: 13px;
+      color: #555;
+      background: #f3f3f3;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
     /* Admin Queue Page */
     .admin-page {
       display: none;
@@ -157,17 +148,6 @@
       border: 1px solid #ccc; padding: 8px; text-align: center;
     }
     th { background: #6b6b6b; color: white; }
-    .back-btn {
-      display: inline-block;
-      margin-bottom: 15px;
-      padding: 8px 20px;
-      background: #fcd34d;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      border: none;
-    }
-    .back-btn:hover { background: #eab308; }
   </style>
 </head>
 <body>
@@ -178,19 +158,9 @@
       <p>WELCOME TO</p>
       <h1>City Health Office</h1>
       <div class="buttons">
-        <a onclick="openAppointmentChoice()">APPOINTMENT</a>
+        <a onclick="openAppointment()">APPOINTMENT</a>
         <a onclick="openLogin()">ADMIN USER</a>
       </div>
-    </div>
-  </div>
-
-  <!-- Appointment Choice Modal -->
-  <div class="appointment-choice" id="appointmentChoice">
-    <div class="choice-box">
-      <h2>Select Option</h2>
-      <button onclick="openAppointment()">Appointment</button>
-      <button onclick="alert('Please proceed to the Health Center for Walk-in.')">Walk-in</button>
-      <button onclick="closeAppointmentChoice()">Cancel</button>
     </div>
   </div>
 
@@ -239,6 +209,19 @@
           <label>Email</label>
           <input type="email" id="email" required>
         </div>
+
+        <!-- Date and Time -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Appointment Date</label>
+            <input type="date" id="appointmentDate" required>
+          </div>
+          <div class="form-group">
+            <label>Appointment Time</label>
+            <input type="time" id="appointmentTime" required>
+          </div>
+        </div>
+
         <div class="form-group">
           <label>Choose Health Center</label>
           <select id="healthcenter" required>
@@ -263,6 +246,15 @@
           <label>Message</label>
           <textarea id="message" rows="4"></textarea>
         </div>
+
+        <!-- ✅ Privacy Notice -->
+        <div class="form-group privacy-box">
+          <input type="checkbox" id="privacyCheck" required>
+          <label for="privacyCheck">
+            I have read and agree to the <b>Privacy Notice</b>. My personal data will only be used for appointment scheduling and health services in compliance with the Data Privacy Act.
+          </label>
+        </div>
+
         <button type="submit">Submit Appointment</button>
       </form>
     </div>
@@ -283,7 +275,6 @@
 
   <!-- Admin Queue Page -->
   <div class="admin-page" id="adminPage">
-    <button class="back-btn" onclick="backHomeFromAdmin()">← Back</button>
     <h2>Appointment Queue</h2>
     <div class="filters">
       <input type="date" id="filterDate">
@@ -298,7 +289,7 @@
     <table>
       <thead>
         <tr>
-          <th>Date</th>
+          <th>Date & Time</th>
           <th>Surname</th>
           <th>First Name</th>
           <th>Middle</th>
@@ -325,14 +316,7 @@
     function closeLogin() {
       document.getElementById("loginModal").style.display = "none";
     }
-    function openAppointmentChoice() {
-      document.getElementById("appointmentChoice").style.display = "flex";
-    }
-    function closeAppointmentChoice() {
-      document.getElementById("appointmentChoice").style.display = "none";
-    }
     function openAppointment() {
-      closeAppointmentChoice();
       document.getElementById("landingPage").style.display = "none";
       document.getElementById("appointmentPage").style.display = "flex";
     }
@@ -340,16 +324,20 @@
       document.getElementById("appointmentPage").style.display = "none";
       document.getElementById("landingPage").style.display = "flex";
     }
-    function backHomeFromAdmin() {
-      document.getElementById("adminPage").style.display = "none";
-      document.getElementById("landingPage").style.display = "flex";
-    }
+
+    // Prevent today’s date (only future dates allowed)
+    let dateInput = document.getElementById("appointmentDate");
+    let today = new Date();
+    today.setDate(today.getDate() + 1); // minimum tomorrow
+    let minDate = today.toISOString().split("T")[0];
+    dateInput.setAttribute("min", minDate);
 
     // Save appointment
     document.getElementById("appointmentForm").addEventListener("submit", function(e){
       e.preventDefault();
       let appointment = {
-        date: new Date().toISOString().split("T")[0],
+        date: document.getElementById("appointmentDate").value,
+        time: document.getElementById("appointmentTime").value,
         surname: document.getElementById("surname").value,
         firstname: document.getElementById("firstname").value,
         middle: document.getElementById("middle").value,
@@ -363,6 +351,7 @@
       appointments.push(appointment);
       alert("Appointment Submitted!");
       document.getElementById("appointmentForm").reset();
+      document.getElementById("appointmentDate").setAttribute("min", minDate); // reset restriction
     });
 
     // Admin login
@@ -392,7 +381,7 @@
                (!filterDate || a.date === filterDate);
       }).forEach(a=>{
         let row = `<tr>
-          <td>${a.date}</td>
+          <td>${a.date} ${a.time}</td>
           <td>${a.surname}</td>
           <td>${a.firstname}</td>
           <td>${a.middle}</td>
