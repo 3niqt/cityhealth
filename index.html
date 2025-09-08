@@ -5,193 +5,345 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>City Health Office</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
-    header { background: #fdd835; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { color: #0d47a1; font-size: 24px; margin: 0; }
-    nav a { margin-left: 20px; text-decoration: none; font-weight: bold; color: black; }
-    nav a:hover { color: #0d47a1; }
-    .appointment-btn { padding: 10px 20px; margin: 20px auto; display: block; border: 2px solid #0d47a1; border-radius: 20px; background: white; color: #0d47a1; font-weight: bold; cursor: pointer; }
-    .appointment-btn:hover { background: #0d47a1; color: white; }
-    .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-    .modal-content { background: white; padding: 30px; border-radius: 15px; width: 500px; max-width: 95%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-    .modal-content h2 { color: #999; margin-bottom: 20px; }
-    .close { float: right; cursor: pointer; font-size: 20px; font-weight: bold; color: #555; }
-    .role-btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #0d47a1; border-radius: 20px; background: white; color: #0d47a1; font-weight: bold; cursor: pointer; }
-    .role-btn:hover { background: #0d47a1; color: white; }
-    form { text-align: left; }
-    label { display: block; margin: 8px 0 4px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
-    .privacy { font-size: 12px; color: gray; margin-bottom: 10px; }
-    .submit-btn { width: 100%; padding: 12px; border: none; border-radius: 20px; background: #0d47a1; color: white; font-weight: bold; cursor: pointer; }
-    .submit-btn:hover { background: #002171; }
-    #adminDashboard { display: none; padding: 20px; }
-    #adminDashboard h2 { margin-bottom: 20px; color: #0d47a1; }
-    .filters { margin-bottom: 15px; }
-    .filters input, .filters select { padding: 8px; margin-right: 10px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
-    th { background: #fdd835; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body, html { height: 100%; width: 100%; }
+
+    /* Landing (Hero Section) */
+    .hero {
+      background: url("city-health-office.png") no-repeat center center/cover;
+      height: 100vh; width: 100%;
+      display: flex; justify-content: center; align-items: center;
+      position: relative;
+    }
+    .overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .content {
+      position: relative; text-align: center; color: #fff; z-index: 1;
+    }
+    .content p { font-size: 14px; letter-spacing: 2px; margin-bottom: 10px; }
+    .content h1 { font-size: 70px; font-weight: bold; color: #fcd34d; margin-bottom: 30px; }
+    .buttons { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+    .buttons a {
+      display: inline-block; padding: 12px 40px;
+      background: white; color: black; text-decoration: none;
+      font-weight: bold; border-radius: 5px; transition: background 0.3s;
+      cursor: pointer;
+    }
+    .buttons a:hover { background: #ddd; }
+
+    /* Login Modal */
+    .login-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 999;
+    }
+    .login-box {
+      background: white; padding: 30px; border-radius: 10px;
+      width: 300px; text-align: center; box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+    }
+    .login-box h2 { margin-bottom: 20px; color: #333; }
+    .login-box input {
+      width: 100%; padding: 10px; margin: 10px 0;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    .login-box button {
+      width: 100%; padding: 10px; background: #fcd34d; border: none;
+      border-radius: 5px; font-weight: bold; cursor: pointer;
+    }
+    .login-box button:hover { background: #eab308; }
+    .close-btn {
+      margin-top: 10px; color: #555; font-size: 14px;
+      cursor: pointer; text-decoration: underline;
+    }
+
+    /* Appointment Page */
+    .appointment-page {
+      display: none;
+      background: #fff;
+      min-height: 100vh;
+      width: 100%;
+      flex-direction: column;
+    }
+    .navbar {
+      background: #6b6b6b;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .navbar img { height: 50px; }
+    .nav-links { display: flex; gap: 30px; }
+    .nav-links a {
+      color: black; text-decoration: none; font-weight: bold;
+    }
+    .nav-links a:hover { text-decoration: underline; }
+
+    /* Appointment Form */
+    .form-container {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+    .form-group label { margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .form-row { display: flex; gap: 15px; }
+    .form-row .form-group { flex: 1; }
+    .form-container button {
+      width: 100%; padding: 12px;
+      background: #6b6b6b; color: white; border: none;
+      border-radius: 5px; font-weight: bold; cursor: pointer;
+      transition: background 0.3s;
+    }
+    .form-container button:hover { background: #555; }
+
+    /* Admin Queue Page */
+    .admin-page {
+      display: none;
+      background: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .admin-page h2 { text-align: center; margin-bottom: 20px; }
+    .filters {
+      display: flex; gap: 15px; justify-content: center; margin-bottom: 20px;
+    }
+    .filters input, .filters select {
+      padding: 8px; border: 1px solid #ccc; border-radius: 5px;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc; padding: 8px; text-align: center;
+    }
+    th { background: #6b6b6b; color: white; }
   </style>
 </head>
 <body>
-
-  <header>
-    <h1>CITY HEALTH OFFICE</h1>
-    <nav>
-      <a href="#">HOME</a>
-      <a href="#">ABOUT</a>
-      <a href="#">SERVICES</a>
-      <a href="#">CONTACT</a>
-    </nav>
-  </header>
-
-  <button class="appointment-btn" id="appointmentBtn">APPOINTMENT</button>
-
-  <!-- Role Modal -->
-  <div id="roleModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('roleModal')">&times;</span>
-      <h2>Select Your Role</h2>
-      <button class="role-btn" onclick="openModal('clientModal')">CLIENT</button>
-      <button class="role-btn" onclick="openModal('adminModal')">ADMIN</button>
+  <!-- Landing Page -->
+  <div class="hero" id="landingPage">
+    <div class="overlay"></div>
+    <div class="content">
+      <p>WELCOME TO</p>
+      <h1>City Health Office</h1>
+      <div class="buttons">
+        <a onclick="openAppointment()">APPOINTMENT</a>
+        <a onclick="openLogin()">ADMIN USER</a>
+      </div>
     </div>
   </div>
 
-  <!-- Client Modal -->
-  <div id="clientModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('clientModal')">&times;</span>
-      <h2>Client Appointment Form</h2>
-      <form id="clientForm">
-        <label>Name</label>
-        <input type="text" id="clientName" required>
-        <label>Age</label>
-        <input type="number" id="clientAge" required>
-        <label>Email</label>
-        <input type="email" id="clientEmail" required>
-        <label>Category</label>
-        <select id="clientCategory" required>
-          <option value="">-- Select Health Center --</option>
-          <option value="Consultation">Tunasan Health Center</option>
-          <option value="Vaccination">Poblacion Health Center</option>
-          <option value="Check-up">Putatan Health Center</option>
-          <option value="Check-up">Bayanan Health Center</option>
-          <option value="Vaccination">Alabang Health Center</option>
-        </select>
-        <label>Purpose</label>
-        <textarea id="clientPurpose" rows="3" required></textarea>
-        <p class="privacy">By submitting this form, you agree that your data will be used for appointment scheduling purposes in compliance with the Data Privacy Act.</p>
-        <button type="submit" class="submit-btn">Submit</button>
+  <!-- Appointment Page -->
+  <div class="appointment-page" id="appointmentPage">
+    <div class="navbar">
+      <img src="logo.png" alt="City Health Logo">
+      <div class="nav-links">
+        <a href="#" onclick="backHome()">HOME</a>
+        <a href="#">SERVICES</a>
+        <a href="#">CONTACT</a>
+      </div>
+    </div>
+    <div class="form-container">
+      <h2>Book an Appointment</h2>
+      <form id="appointmentForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Surname</label>
+            <input type="text" id="surname" required>
+          </div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstname" required>
+          </div>
+          <div class="form-group">
+            <label>Middle Initial</label>
+            <input type="text" id="middle">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="age" required>
+          </div>
+          <div class="form-group">
+            <label>Sex</label>
+            <select id="sex" required>
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+          <label>Services</label>
+          <select id="services" required>
+            <option value="">Select Service</option>
+            <option>General Consultation</option>
+            <option>Vaccination</option>
+            <option>Health Certificate</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea id="message" rows="4"></textarea>
+        </div>
+        <button type="submit">Submit Appointment</button>
       </form>
     </div>
   </div>
 
-  <!-- Admin Modal -->
-  <div id="adminModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('adminModal')">&times;</span>
+  <!-- Login Modal -->
+  <div class="login-modal" id="loginModal">
+    <div class="login-box">
       <h2>Admin Login</h2>
-      <form id="adminLoginForm">
-        <label>Username</label>
-        <input type="text" id="adminUser" required>
-        <label>Password</label>
-        <input type="password" id="adminPass" required>
-        <button type="submit" class="submit-btn">Login</button>
+      <form onsubmit="event.preventDefault(); loginAdmin();">
+        <input type="text" id="adminUser" placeholder="Username" required>
+        <input type="password" id="adminPass" placeholder="Password" required>
+        <button type="submit">Login</button>
       </form>
+      <div class="close-btn" onclick="closeLogin()">Close</div>
     </div>
   </div>
 
-  <!-- Admin Dashboard -->
-  <div id="adminDashboard">
-    <h2>Client Appointments</h2>
+  <!-- Admin Queue Page -->
+  <div class="admin-page" id="adminPage">
+    <h2>Appointment Queue</h2>
     <div class="filters">
-      <input type="text" id="searchBar" placeholder="Search by name, email or purpose">
       <input type="date" id="filterDate">
-      <select id="filterCategory">
-        <option value="">All Categories</option>
-        <option value="Consultation">Consultation</option>
-        <option value="Vaccination">Vaccination</option>
-        <option value="Check-up">Check-up</option>
+      <select id="filterService">
+        <option value="">All Services</option>
+        <option>General Consultation</option>
+        <option>Vaccination</option>
+        <option>Health Certificate</option>
+        <option>Other</option>
       </select>
     </div>
     <table>
       <thead>
         <tr>
           <th>Date</th>
-          <th>Name</th>
+          <th>Surname</th>
+          <th>First Name</th>
+          <th>Middle</th>
           <th>Age</th>
+          <th>Sex</th>
           <th>Email</th>
-          <th>Category</th>
-          <th>Purpose</th>
+          <th>Service</th>
+          <th>Message</th>
         </tr>
       </thead>
-      <tbody id="appointmentsTable"></tbody>
+      <tbody id="queueTable">
+        <!-- Appointments will appear here -->
+      </tbody>
     </table>
   </div>
 
   <script>
-    // ✅ Persist appointments in LocalStorage
-    let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+    let appointments = [];
 
-    document.getElementById("appointmentBtn").onclick = function() {
-      openModal("roleModal");
-    };
+    function openLogin() {
+      document.getElementById("loginModal").style.display = "flex";
+    }
+    function closeLogin() {
+      document.getElementById("loginModal").style.display = "none";
+    }
+    function openAppointment() {
+      document.getElementById("landingPage").style.display = "none";
+      document.getElementById("appointmentPage").style.display = "flex";
+    }
+    function backHome() {
+      document.getElementById("appointmentPage").style.display = "none";
+      document.getElementById("landingPage").style.display = "flex";
+    }
 
-    function openModal(id) { closeAllModals(); document.getElementById(id).style.display = "flex"; }
-    function closeModal(id) { document.getElementById(id).style.display = "none"; }
-    function closeAllModals() { document.querySelectorAll(".modal").forEach(m => m.style.display = "none"); }
-    window.onclick = function(event) { document.querySelectorAll(".modal").forEach(modal => { if (event.target == modal) modal.style.display = "none"; }); }
-
-    // Client form
-    document.getElementById("clientForm").addEventListener("submit", function(e) {
+    // Save appointment
+    document.getElementById("appointmentForm").addEventListener("submit", function(e){
       e.preventDefault();
-      const newAppointment = {
+      let appointment = {
         date: new Date().toISOString().split("T")[0],
-        name: document.getElementById("clientName").value,
-        age: document.getElementById("clientAge").value,
-        email: document.getElementById("clientEmail").value,
-        category: document.getElementById("clientCategory").value,
-        purpose: document.getElementById("clientPurpose").value
+        surname: document.getElementById("surname").value,
+        firstname: document.getElementById("firstname").value,
+        middle: document.getElementById("middle").value,
+        age: document.getElementById("age").value,
+        sex: document.getElementById("sex").value,
+        email: document.getElementById("email").value,
+        service: document.getElementById("services").value,
+        message: document.getElementById("message").value
       };
-      appointments.push(newAppointment);
-      localStorage.setItem("appointments", JSON.stringify(appointments)); // save
+      appointments.push(appointment);
       alert("Appointment Submitted!");
-      this.reset();
-      closeModal("clientModal");
+      document.getElementById("appointmentForm").reset();
     });
 
     // Admin login
-    document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const user = document.getElementById("adminUser").value;
-      const pass = document.getElementById("adminPass").value;
-      if(user === "admin" && pass === "1234") {
-        closeModal("adminModal");
-        document.getElementById("adminDashboard").style.display = "block";
+    function loginAdmin(){
+      let user = document.getElementById("adminUser").value;
+      let pass = document.getElementById("adminPass").value;
+      if(user === "admin" && pass === "1234"){  // sample login
+        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("landingPage").style.display = "none";
+        document.getElementById("appointmentPage").style.display = "none";
+        document.getElementById("adminPage").style.display = "block";
         renderTable();
       } else {
-        alert("Invalid credentials!");
+        alert("Invalid Credentials!");
       }
-    });
+    }
 
-    function renderTable() {
-      const tbody = document.getElementById("appointmentsTable");
+    // Render queue table
+    function renderTable(){
+      let tbody = document.getElementById("queueTable");
       tbody.innerHTML = "";
-      let filtered = appointments;
-      const search = document.getElementById("searchBar").value.toLowerCase();
-      const filterDate = document.getElementById("filterDate").value;
-      const filterCategory = document.getElementById("filterCategory").value;
-      if(search) filtered = filtered.filter(a => a.name.toLowerCase().includes(search) || a.email.toLowerCase().includes(search) || a.purpose.toLowerCase().includes(search));
-      if(filterDate) filtered = filtered.filter(a => a.date === filterDate);
-      if(filterCategory) filtered = filtered.filter(a => a.category === filterCategory);
-      filtered.forEach(a => {
-        tbody.innerHTML += `<tr><td>${a.date}</td><td>${a.name}</td><td>${a.age}</td><td>${a.email}</td><td>${a.category}</td><td>${a.purpose}</td></tr>`;
+      let filterService = document.getElementById("filterService").value;
+      let filterDate = document.getElementById("filterDate").value;
+
+      appointments.filter(a=>{
+        return (!filterService || a.service === filterService) &&
+               (!filterDate || a.date === filterDate);
+      }).forEach(a=>{
+        let row = `<tr>
+          <td>${a.date}</td>
+          <td>${a.surname}</td>
+          <td>${a.firstname}</td>
+          <td>${a.middle}</td>
+          <td>${a.age}</td>
+          <td>${a.sex}</td>
+          <td>${a.email}</td>
+          <td>${a.service}</td>
+          <td>${a.message}</td>
+        </tr>`;
+        tbody.innerHTML += row;
       });
     }
 
-    document.getElementById("searchBar").addEventListener("input", renderTable);
+    document.getElementById("filterService").addEventListener("change", renderTable);
     document.getElementById("filterDate").addEventListener("change", renderTable);
-    document.getElementById("filterCategory").addEventListener("change", renderTable);
   </script>
 </body>
 </html>
