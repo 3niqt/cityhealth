@@ -5,170 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>City Health Office</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-
-    /* Header */
-    header {
-      background: #fdd835;
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      color: #0d47a1;
-      font-size: 24px;
-      margin: 0;
-    }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      font-weight: bold;
-      color: black;
-    }
-
-    nav a:hover {
-      color: #0d47a1;
-    }
-
-    /* Main Section */
-    .content {
-      background: #fff176;
-      text-align: center;
-      padding: 50px 20px;
-    }
-
-    .content h2 {
-      color: #0d47a1;
-    }
-
-    .appointment-btn {
-      padding: 10px 20px;
-      margin-top: 20px;
-      border: 2px solid #0d47a1;
-      border-radius: 20px;
-      background: white;
-      color: #0d47a1;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .appointment-btn:hover {
-      background: #0d47a1;
-      color: white;
-    }
-
-    /* Description Section */
-    .description {
-      display: flex;
-      padding: 30px;
-    }
-    .description img {
-      width: 50%;
-    }
-    .description-text {
-      width: 50%;
-      padding: 20px;
-      font-size: 15px;
-      line-height: 1.6;
-    }
-
-    /* Modal Background */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Modal Content */
-    .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      width: 400px;
-      max-width: 95%;
-      text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .modal-content h2 {
-      color: #0d47a1;
-      margin-bottom: 20px;
-    }
-
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 20px;
-      font-weight: bold;
-      color: #555;
-    }
-
-    .role-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 2px solid #0d47a1;
-      border-radius: 20px;
-      background: white;
-      color: #0d47a1;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .role-btn:hover {
-      background: #0d47a1;
-      color: white;
-    }
-
-    /* Forms */
-    form {
-      text-align: left;
-    }
-    label {
-      display: block;
-      margin: 8px 0 4px;
-      font-weight: bold;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-    }
-    .privacy {
-      font-size: 12px;
-      color: gray;
-      margin-bottom: 10px;
-    }
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 20px;
-      background: #0d47a1;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .submit-btn:hover {
-      background: #002171;
-    }
+    body { margin: 0; font-family: Arial, sans-serif; }
+    header { background: #fdd835; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { color: #0d47a1; font-size: 24px; margin: 0; }
+    nav a { margin-left: 20px; text-decoration: none; font-weight: bold; color: black; }
+    nav a:hover { color: #0d47a1; }
+    .appointment-btn { padding: 10px 20px; margin: 20px auto; display: block; border: 2px solid #0d47a1; border-radius: 20px; background: white; color: #0d47a1; font-weight: bold; cursor: pointer; }
+    .appointment-btn:hover { background: #0d47a1; color: white; }
+    .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+    .modal-content { background: white; padding: 30px; border-radius: 15px; width: 500px; max-width: 95%; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+    .modal-content h2 { color: #999; margin-bottom: 20px; }
+    .close { float: right; cursor: pointer; font-size: 20px; font-weight: bold; color: #555; }
+    .role-btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #0d47a1; border-radius: 20px; background: white; color: #0d47a1; font-weight: bold; cursor: pointer; }
+    .role-btn:hover { background: #0d47a1; color: white; }
+    form { text-align: left; }
+    label { display: block; margin: 8px 0 4px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 15px; }
+    .privacy { font-size: 12px; color: gray; margin-bottom: 10px; }
+    .submit-btn { width: 100%; padding: 12px; border: none; border-radius: 20px; background: #0d47a1; color: white; font-weight: bold; cursor: pointer; }
+    .submit-btn:hover { background: #002171; }
+    #adminDashboard { display: none; padding: 20px; }
+    #adminDashboard h2 { margin-bottom: 20px; color: #0d47a1; }
+    .filters { margin-bottom: 15px; }
+    .filters input, .filters select { padding: 8px; margin-right: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+    th { background: #fdd835; }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header>
     <h1>CITY HEALTH OFFICE</h1>
     <nav>
@@ -179,21 +45,7 @@
     </nav>
   </header>
 
-  <!-- Content -->
-  <section class="content">
-    <h2>Welcome to City Health Website</h2>
-    <button class="appointment-btn" id="appointmentBtn">APPOINTMENT</button>
-  </section>
-
-  <!-- Description -->
-  <section class="description">
-    <img src="map.png" alt="Map Image">
-    <div class="description-text">
-      <p>The City Health Office (CHO) was created under the Republic Act No. 7160 also known as the Local Government Code where in public health service was one of the national functions devolved to local government units. It is the one in charge in the delivery of health services to the community and oversees the implementation of different health programs of the Department of Health (DOH). The CHO in its own building is located at Centennial Avenue, Tunasan, Muntinlupa City. It has 15 health centers (HC) and one health station distributed in the 9 barangays of the city and is instituted depending on the population of the barangay.</p>
-
-      <p>The CHO generally manage the personnel and staff of the said office; it also coordinates with other government agencies and non-government agencies to ensure delivery of basic health care and promotion of health to the community. It also recommends to the Sangguniang Panglungsod through the Local Health Board an ordinance that will aid in the preservation and improvement of the public health.</p>
-    </div>
-  </section>
+  <button class="appointment-btn" id="appointmentBtn">APPOINTMENT</button>
 
   <!-- Role Modal -->
   <div id="roleModal" class="modal">
@@ -210,31 +62,25 @@
     <div class="modal-content">
       <span class="close" onclick="closeModal('clientModal')">&times;</span>
       <h2>Client Appointment Form</h2>
-      <form>
+      <form id="clientForm">
         <label>Name</label>
-        <input type="text" required>
-
+        <input type="text" id="clientName" required>
         <label>Age</label>
-        <input type="number" required>
-
+        <input type="number" id="clientAge" required>
         <label>Email</label>
-        <input type="email" required>
-
+        <input type="email" id="clientEmail" required>
         <label>Category</label>
-        <select required>
+        <select id="clientCategory" required>
           <option value="">-- Select Health Center --</option>
-          <option value="consultation">Tunasan</option>
-          <option value="vaccination">Poblacion</option>
-          <option value="checkup">Putatan</option>
+          <option value="Consultation">Tunasan Health Center</option>
+          <option value="Vaccination">Poblacion Health Center</option>
+          <option value="Check-up">Putatan Health Center</option>
+          <option value="Check-up">Bayanan Health Center</option>
+          <option value="Vaccination">Alabang Health Center</option>
         </select>
-
         <label>Purpose</label>
-        <textarea rows="3" required></textarea>
-
-        <p class="privacy">
-          By submitting this form, you agree that your data will be used for appointment scheduling purposes in compliance with the Data Privacy Act.
-        </p>
-
+        <textarea id="clientPurpose" rows="3" required></textarea>
+        <p class="privacy">By submitting this form, you agree that your data will be used for appointment scheduling purposes in compliance with the Data Privacy Act.</p>
         <button type="submit" class="submit-btn">Submit</button>
       </form>
     </div>
@@ -245,46 +91,107 @@
     <div class="modal-content">
       <span class="close" onclick="closeModal('adminModal')">&times;</span>
       <h2>Admin Login</h2>
-      <form>
+      <form id="adminLoginForm">
         <label>Username</label>
-        <input type="text" required>
-
+        <input type="text" id="adminUser" required>
         <label>Password</label>
-        <input type="password" required>
-
+        <input type="password" id="adminPass" required>
         <button type="submit" class="submit-btn">Login</button>
       </form>
     </div>
   </div>
 
+  <!-- Admin Dashboard -->
+  <div id="adminDashboard">
+    <h2>Client Appointments</h2>
+    <div class="filters">
+      <input type="text" id="searchBar" placeholder="Search by name, email or purpose">
+      <input type="date" id="filterDate">
+      <select id="filterCategory">
+        <option value="">All Categories</option>
+        <option value="Consultation">Consultation</option>
+        <option value="Vaccination">Vaccination</option>
+        <option value="Check-up">Check-up</option>
+      </select>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Email</th>
+          <th>Category</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody id="appointmentsTable"></tbody>
+    </table>
+  </div>
+
   <script>
-    // Show role modal
+    // ✅ Persist appointments in LocalStorage
+    let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
     document.getElementById("appointmentBtn").onclick = function() {
       openModal("roleModal");
     };
 
-    function openModal(id) {
-      closeAllModals();
-      document.getElementById(id).style.display = "flex";
-    }
+    function openModal(id) { closeAllModals(); document.getElementById(id).style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+    function closeAllModals() { document.querySelectorAll(".modal").forEach(m => m.style.display = "none"); }
+    window.onclick = function(event) { document.querySelectorAll(".modal").forEach(modal => { if (event.target == modal) modal.style.display = "none"; }); }
 
-    function closeModal(id) {
-      document.getElementById(id).style.display = "none";
-    }
+    // Client form
+    document.getElementById("clientForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const newAppointment = {
+        date: new Date().toISOString().split("T")[0],
+        name: document.getElementById("clientName").value,
+        age: document.getElementById("clientAge").value,
+        email: document.getElementById("clientEmail").value,
+        category: document.getElementById("clientCategory").value,
+        purpose: document.getElementById("clientPurpose").value
+      };
+      appointments.push(newAppointment);
+      localStorage.setItem("appointments", JSON.stringify(appointments)); // save
+      alert("Appointment Submitted!");
+      this.reset();
+      closeModal("clientModal");
+    });
 
-    function closeAllModals() {
-      document.querySelectorAll(".modal").forEach(m => m.style.display = "none");
-    }
+    // Admin login
+    document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const user = document.getElementById("adminUser").value;
+      const pass = document.getElementById("adminPass").value;
+      if(user === "admin" && pass === "1234") {
+        closeModal("adminModal");
+        document.getElementById("adminDashboard").style.display = "block";
+        renderTable();
+      } else {
+        alert("Invalid credentials!");
+      }
+    });
 
-    // Close when clicking outside
-    window.onclick = function(event) {
-      document.querySelectorAll(".modal").forEach(modal => {
-        if (event.target == modal) {
-          modal.style.display = "none";
-        }
+    function renderTable() {
+      const tbody = document.getElementById("appointmentsTable");
+      tbody.innerHTML = "";
+      let filtered = appointments;
+      const search = document.getElementById("searchBar").value.toLowerCase();
+      const filterDate = document.getElementById("filterDate").value;
+      const filterCategory = document.getElementById("filterCategory").value;
+      if(search) filtered = filtered.filter(a => a.name.toLowerCase().includes(search) || a.email.toLowerCase().includes(search) || a.purpose.toLowerCase().includes(search));
+      if(filterDate) filtered = filtered.filter(a => a.date === filterDate);
+      if(filterCategory) filtered = filtered.filter(a => a.category === filterCategory);
+      filtered.forEach(a => {
+        tbody.innerHTML += `<tr><td>${a.date}</td><td>${a.name}</td><td>${a.age}</td><td>${a.email}</td><td>${a.category}</td><td>${a.purpose}</td></tr>`;
       });
     }
-  </script>
 
+    document.getElementById("searchBar").addEventListener("input", renderTable);
+    document.getElementById("filterDate").addEventListener("change", renderTable);
+    document.getElementById("filterCategory").addEventListener("change", renderTable);
+  </script>
 </body>
 </html>
