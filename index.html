@@ -33,6 +33,25 @@
     }
     .buttons a:hover { background: #ddd; }
 
+    /* Appointment Choice */
+    .appointment-choice {
+      display: none;
+      background: rgba(0,0,0,0.8);
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      justify-content: center; align-items: center; z-index: 999;
+    }
+    .choice-box {
+      background: white; padding: 30px; border-radius: 10px;
+      text-align: center; width: 300px;
+    }
+    .choice-box h2 { margin-bottom: 20px; }
+    .choice-box button {
+      width: 100%; padding: 12px; margin: 10px 0;
+      border: none; border-radius: 5px;
+      background: #fcd34d; font-weight: bold; cursor: pointer;
+    }
+    .choice-box button:hover { background: #eab308; }
+
     /* Login Modal */
     .login-modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -138,6 +157,17 @@
       border: 1px solid #ccc; padding: 8px; text-align: center;
     }
     th { background: #6b6b6b; color: white; }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 15px;
+      padding: 8px 20px;
+      background: #fcd34d;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+    }
+    .back-btn:hover { background: #eab308; }
   </style>
 </head>
 <body>
@@ -148,9 +178,19 @@
       <p>WELCOME TO</p>
       <h1>City Health Office</h1>
       <div class="buttons">
-        <a onclick="openAppointment()">APPOINTMENT</a>
+        <a onclick="openAppointmentChoice()">APPOINTMENT</a>
         <a onclick="openLogin()">ADMIN USER</a>
       </div>
+    </div>
+  </div>
+
+  <!-- Appointment Choice Modal -->
+  <div class="appointment-choice" id="appointmentChoice">
+    <div class="choice-box">
+      <h2>Select Option</h2>
+      <button onclick="openAppointment()">Appointment</button>
+      <button onclick="alert('Please proceed to the Health Center for Walk-in.')">Walk-in</button>
+      <button onclick="closeAppointmentChoice()">Cancel</button>
     </div>
   </div>
 
@@ -200,6 +240,16 @@
           <input type="email" id="email" required>
         </div>
         <div class="form-group">
+          <label>Choose Health Center</label>
+          <select id="healthcenter" required>
+            <option value="">Select Health Center</option>
+            <option>Main City Health Center</option>
+            <option>Barangay Health Station 1</option>
+            <option>Barangay Health Station 2</option>
+            <option>Barangay Health Station 3</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label>Services</label>
           <select id="services" required>
             <option value="">Select Service</option>
@@ -233,6 +283,7 @@
 
   <!-- Admin Queue Page -->
   <div class="admin-page" id="adminPage">
+    <button class="back-btn" onclick="backHomeFromAdmin()">← Back</button>
     <h2>Appointment Queue</h2>
     <div class="filters">
       <input type="date" id="filterDate">
@@ -254,6 +305,7 @@
           <th>Age</th>
           <th>Sex</th>
           <th>Email</th>
+          <th>Health Center</th>
           <th>Service</th>
           <th>Message</th>
         </tr>
@@ -273,12 +325,23 @@
     function closeLogin() {
       document.getElementById("loginModal").style.display = "none";
     }
+    function openAppointmentChoice() {
+      document.getElementById("appointmentChoice").style.display = "flex";
+    }
+    function closeAppointmentChoice() {
+      document.getElementById("appointmentChoice").style.display = "none";
+    }
     function openAppointment() {
+      closeAppointmentChoice();
       document.getElementById("landingPage").style.display = "none";
       document.getElementById("appointmentPage").style.display = "flex";
     }
     function backHome() {
       document.getElementById("appointmentPage").style.display = "none";
+      document.getElementById("landingPage").style.display = "flex";
+    }
+    function backHomeFromAdmin() {
+      document.getElementById("adminPage").style.display = "none";
       document.getElementById("landingPage").style.display = "flex";
     }
 
@@ -293,6 +356,7 @@
         age: document.getElementById("age").value,
         sex: document.getElementById("sex").value,
         email: document.getElementById("email").value,
+        healthcenter: document.getElementById("healthcenter").value,
         service: document.getElementById("services").value,
         message: document.getElementById("message").value
       };
@@ -335,6 +399,7 @@
           <td>${a.age}</td>
           <td>${a.sex}</td>
           <td>${a.email}</td>
+          <td>${a.healthcenter}</td>
           <td>${a.service}</td>
           <td>${a.message}</td>
         </tr>`;
