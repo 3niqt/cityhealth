@@ -38,6 +38,19 @@
             width: 90%;
             max-width: 500px;
         }
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 2000;
+        }
     </style>
     <!-- Firebase SDK -->
     <script type="module">
@@ -84,11 +97,26 @@
             });
         }
 
+        function showMessage(message, duration = 3000) {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = message;
+            messageBox.style.opacity = '1';
+            setTimeout(() => {
+                messageBox.style.opacity = '0';
+            }, duration);
+        }
+
         window.saveClientDraft = async function() {
+            if (!userId) {
+                showMessage("Please wait for authentication to complete. Try again in a moment.");
+                return;
+            }
+
             const clientName = document.getElementById('client-name').value.trim();
             const medicinesListEl = document.getElementById('medicines-list');
             
             if (clientName === '') {
+                showMessage("Client name cannot be empty.", 2000);
                 return;
             }
 
@@ -112,18 +140,26 @@
             try {
                 await addDoc(draftedClientsRef, newClientDraft);
                 clearClientForm();
+                showMessage("Client draft saved successfully!");
             } catch (error) {
                 console.error("Error adding document: ", error);
+                showMessage("Error saving client draft. Please try again.");
             }
         }
 
         window.publishDrafts = async function() {
+            if (!userId) {
+                showMessage("Please wait for authentication to complete. Try again in a moment.");
+                return;
+            }
+
             const draftedClientsRef = collection(db, `artifacts/${appId}/public/data/drafted_clients`);
             const publishedClientsRef = collection(db, `artifacts/${appId}/public/data/published_clients`);
             const q = query(draftedClientsRef);
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
+                showMessage("No clients to publish.", 2000);
                 return;
             }
 
@@ -149,6 +185,7 @@
                 window.location.href = 'medicine_claim_admin.html';
             } catch (error) {
                 console.error("Error publishing drafts: ", error);
+                showMessage("Error publishing drafts. Please try again.");
             }
         }
         
@@ -181,6 +218,9 @@
     </script>
 </head>
 <body class="bg-[#e6f0ff]">
+    <!-- Message box -->
+    <div id="message-box" class="message-box"></div>
+
     <!-- Main content container -->
     <div class="container w-full">
         <!-- Header -->
