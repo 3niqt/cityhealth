@@ -1,138 +1,743 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>City Health Office Queue</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medicine Claim - Admin App</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #87CEEB;
+    }
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+      min-width: 300px;
+    }
+    .modal-btn-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .printable-area, .printable-area * {
+        visibility: visible;
+      }
+      .printable-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+    /* Simple spinner for loading state */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border-left-color: #6366f1;
+      animation: spin 1s ease infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+<body class="bg-[#e6f0ff] p-4 sm:p-6 md:p-10">
+  <div id="modal-container"></div>
+  <div id="app-root" class="max-w-7xl mx-auto space-y-6">
+    <!-- Header -->
+    <header class="flex flex-col sm:flex-row justify-between items-center bg-white p-4 sm:p-6 rounded-xl shadow-md bg-yellow-400 text-black">
+      <div class="flex items-center space-x-4">
+        <div class="h-16 w-16 bg-white rounded-full flex items-center justify-center p-2">
+           <img src="https://muntinlupacity.gov.ph//wp-content/uploads/2022/10/HEALTH.png" alt="Muntinlupa City Health Office Logo" class="h-full w-full object-contain" />
+        </div>
+        <div class="text-xl sm:text-2x2 font-bold">MUNTINLUPA CITY HEALTH OFFICE</div>
+      </div>
+    </header>
 
-  <!-- Header -->
-  <div class="w-full bg-yellow-400 flex justify-between items-center px-6 py-3">
-    <div class="flex items-center space-x-2">
-      <img src="logo.png" alt="Logo" class="w-12 h-12">
-      <h1 class="text-3xl font-bold text-white">CITY HEALTH OFFICE</h1>
+    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md text-gray-800">
+      <h1 class="text-xl sm:text-2xl font-bold">MEDICINE CLAIM - ADMIN</h1>
+      <p class="text-sm text-gray-500 mt-1">Add clients, attach multiple medicines, publish, mark claimed, export & print.</p>
+      <div id="auth-status" class="text-xs mt-2 text-gray-400">Loading user...</div>
     </div>
-    <div id="clock" class="text-lg font-bold text-gray-800"></div>
-  </div>
 
-  <!-- Main Queue Display -->
-  <div class="flex justify-center items-start w-full mt-8 space-x-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <!-- Available -->
-    <div class="bg-green-500 text-white text-center rounded-2xl px-6 py-6 w-40">
-      <h2 class="font-bold">AVAILABLE</h2>
-      <p id="available" class="text-3xl mt-2">0</p>
-    </div>
+      <!-- Left: Add Client & Medicines -->
+      <div class="bg-white p-6 rounded-xl shadow-md border-2 border-blue-400">
+        <h2 class="text-lg font-semibold text-gray-800">Add Client and Medicines</h2>
+        <div class="mt-4">
+          <label for="clientName" class="block text-sm font-medium text-gray-700">Client name</label>
+          <input type="text" id="clientName" placeholder="e.g. Maria Santos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm p-2" />
+        </div>
+        
+        <div class="mt-4">
+          <label for="healthCenterSelect" class="block text-sm font-medium text-gray-700">Health Center</label>
+          <select id="healthCenterSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm p-2">
+          </select>
+        </div>
 
-    <!-- Now Serving -->
-    <div class="flex flex-col items-center">
-      <h2 class="font-bold text-xl">NOW SERVING</h2>
-      <div class="bg-green-500 text-white rounded-2xl flex items-center justify-center w-48 h-48 mt-2">
-        <p id="current" class="text-7xl font-bold">1</p>
+        <div class="mt-4 flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <label for="medName" class="block text-sm font-medium text-gray-700">Medicine name</label>
+            <input type="text" id="medName" placeholder="e.g. Paracetamol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm p-2" />
+          </div>
+          <div class="w-24">
+            <label for="medQty" class="block text-sm font-medium text-gray-700">Qty</label>
+            <input type="number" id="medQty" value="1" min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm sm:text-sm p-2" />
+          </div>
+          <div class="flex items-end">
+            <button id="addMedBtn" class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors duration-200">Add Med</button>
+          </div>
+        </div>
+
+        <div id="draftMedsContainer" class="mt-4 text-sm text-gray-500">No medicines added yet.</div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-4">
+          <button id="saveClientBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors duration-200">Save Client (to draft)</button>
+          <button id="clearDraftBtn" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors duration-200">Clear Draft</button>
+        </div>
+
+        <h3 class="text-md font-semibold text-gray-700 mt-6">Drafted Clients</h3>
+        <div id="draftClients" class="mt-2 space-y-3 overflow-y-auto max-h-80">
+          <div class="text-sm text-gray-500">Loading drafts...</div>
+        </div>
+        <div class="mt-6">
+          <button id="publishBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md shadow-sm transition-colors duration-200">Publish All Drafts</button>
+        </div>
       </div>
 
-      <!-- Shortcut Legend -->
-      <div class="mt-6 text-sm text-gray-600 text-center">
-        <p><strong>Keyboard Shortcuts:</strong></p>
-        <p>N = Next | R = Recall | S = Skip | X = Reset</p>
+      <!-- Right: Published & Export -->
+      <div class="bg-white p-6 rounded-xl shadow-md border-2 border-blue-400">
+        <h2 class="text-lg font-semibold text-gray-800">Published Clients</h2>
+        <p class="text-sm text-gray-500 mt-1">Published clients are ready for delivery or claiming.</p>
+        <div id="publishedList" class="mt-4 space-y-4 overflow-y-auto max-h-[500px]">
+          <div class="text-sm text-gray-500">Loading published list...</div>
+        </div>
       </div>
     </div>
 
-    <!-- Queue List -->
-    <div class="bg-green-500 text-white text-center rounded-2xl px-6 py-6 w-40">
-      <h2 class="font-bold">IN QUEUE</h2>
-      <ul id="queueList" class="mt-2 space-y-2 text-lg font-semibold">
-        <li>No. 2</li>
-        <li>No. 3</li>
-        <li>No. 4</li>
-        <li>No. 5</li>
-      </ul>
+    <!-- Footer: Export & Print -->
+    <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md flex flex-wrap justify-between items-center gap-4">
+      <div class="text-sm text-gray-500">
+        Tip: Data is synced to the cloud. You can use the export options to create reports.
+      </div>
+      <div class="flex flex-wrap gap-4">
+        <button id="downloadCsvBtn" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition-colors duration-200">Download CSV</button>
+        <button id="printBtn" class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md transition-colors duration-200">Print Report</button>
+      </div>
     </div>
 
+    <div class="text-center text-xs text-gray-400 mt-4">
+      <div id="last-saved">Last saved: never</div>
+      <div id="user-id-display" class="font-mono mt-1 break-all">User ID: N/A</div>
+    </div>
   </div>
 
-  <script>
-    let current = 1;
-    let queue = [2, 3, 4, 5, 6, 7, 8];
-    let available = queue.length;
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, runTransaction, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    
+    // Set Firestore debug level
+    setLogLevel('debug');
 
-    // Update display
-    function updateDisplay() {
-      document.getElementById("current").innerText = current;
-      document.getElementById("available").innerText = available;
+    // Global variables from the runtime environment
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-      let list = document.getElementById("queueList");
-      list.innerHTML = "";
-      queue.slice(0, 5).forEach(num => {
-        let li = document.createElement("li");
-        li.innerText = "No. " + num;
-        list.appendChild(li);
+    // UI Elements
+    const clientNameEl = document.getElementById('clientName');
+    const healthCenterSelect = document.getElementById('healthCenterSelect');
+    const medNameEl = document.getElementById('medName');
+    const medQtyEl = document.getElementById('medQty');
+    const addMedBtn = document.getElementById('addMedBtn');
+    const draftMedsContainer = document.getElementById('draftMedsContainer');
+    const saveClientBtn = document.getElementById('saveClientBtn');
+    const clearDraftBtn = document.getElementById('clearDraftBtn');
+    const draftClientsEl = document.getElementById('draftClients');
+    const publishBtn = document.getElementById('publishBtn');
+    const publishedListEl = document.getElementById('publishedList');
+    const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+    const printBtn = document.getElementById('printBtn');
+    const lastSavedEl = document.getElementById('last-saved');
+    const userIdDisplayEl = document.getElementById('user-id-display');
+    const modalContainer = document.getElementById('modal-container');
+    const authStatusEl = document.getElementById('auth-status');
+
+    let db;
+    let auth;
+    let userId;
+    let localDraftMedicines = [];
+    let isAuthReady = false;
+
+    // Health Center options
+    const healthCenters = [
+      'Alabang',
+      'Ayala Alabang',
+      'Bayanan Main',
+      'Bayanan Annex',
+      'Buli',
+      'Cupang',
+      'Poblacion',
+      'Putatan',
+      'Sucat',
+      'Soldiers Hills',
+      'Tunasan',
+      'Bagong Silang',
+      'Lakeview',
+      'Sitio Sto.Nino',
+      'SouthVille',
+      'Victoria',
+      'Laguerta'
+    ];
+
+    // Initialize Firebase
+    if (Object.keys(firebaseConfig).length > 0) {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      auth = getAuth(app);
+      authStatusEl.textContent = 'Initializing...';
+    } else {
+      console.error("Firebase config is missing.");
+      authStatusEl.textContent = 'Error: Firebase not configured.';
+    }
+
+    // --- Custom Modal UI Functions ---
+    /**
+     * Shows a custom modal dialog.
+     * @param {Object} options - Modal options.
+     * @param {string} options.message - The message to display.
+     * @param {string} options.type - 'alert' or 'confirm'.
+     * @param {string} options.title - The modal title.
+     * @returns {Promise<boolean>} Resolves with true for 'OK'/'Yes', false for 'Cancel'/'No'.
+     */
+    function showModal(options) {
+      return new Promise(resolve => {
+        const { message, type = 'alert', title = 'Notification' } = options;
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">${escapeHtml(title)}</h3>
+            <p class="text-sm text-gray-600">${escapeHtml(message)}</p>
+            <div class="modal-btn-group">
+              ${type === 'confirm' ? `
+                <button id="modal-cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm font-semibold hover:bg-gray-300">Cancel</button>
+                <button id="modal-ok-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-semibold hover:bg-blue-600">OK</button>
+              ` : `
+                <button id="modal-ok-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-semibold hover:bg-blue-600">OK</button>
+              `}
+            </div>
+          </div>
+        `;
+        
+        modalContainer.appendChild(modal);
+
+        const okBtn = document.getElementById('modal-ok-btn');
+        const cancelBtn = document.getElementById('modal-cancel-btn');
+
+        okBtn.addEventListener('click', () => {
+          modalContainer.removeChild(modal);
+          resolve(true);
+        });
+
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', () => {
+            modalContainer.removeChild(modal);
+            resolve(false);
+          });
+        }
       });
     }
 
-    // Next Number
-    function nextNumber() {
-      if (queue.length > 0) {
-        current = queue.shift();
-        available = queue.length;
-        updateDisplay();
+    // --- Data Persistence and Listeners ---
+    let unsubscribeDrafts;
+    let unsubscribePublished;
+
+    // Use onAuthStateChanged to get the user ID and initialize listeners
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        userId = user.uid;
+        authStatusEl.textContent = 'Authenticated.';
+      } else {
+        // Sign in anonymously if no custom token is available
+        authStatusEl.textContent = 'Signing in anonymously...';
+        await signInAnonymously(auth);
+        userId = auth.currentUser?.uid;
+        authStatusEl.textContent = 'Signed in anonymously.';
       }
-    }
-
-    // Recall Number
-    function recallNumber() {
-      alert("Recalling No. " + current);
-    }
-
-    // Skip Number
-    function skipNumber() {
-      if (queue.length > 0) {
-        queue.push(current);
-        current = queue.shift();
-        available = queue.length;
-        updateDisplay();
-      }
-    }
-
-    // Reset Queue
-    function resetQueue() {
-      current = 1;
-      queue = [2, 3, 4, 5, 6, 7, 8];
-      available = queue.length;
-      updateDisplay();
-    }
-
-    // Clock
-    function updateClock() {
-      let now = new Date();
-      document.getElementById("clock").innerText =
-        now.toLocaleDateString() + " " + now.toLocaleTimeString();
-    }
-    setInterval(updateClock, 1000);
-
-    // Keyboard Shortcuts
-    document.addEventListener("keydown", function(event) {
-      switch(event.key.toLowerCase()) {
-        case "n": // Next
-          nextNumber();
-          break;
-        case "r": // Recall
-          recallNumber();
-          break;
-        case "s": // Skip
-          skipNumber();
-          break;
-        case "x": // Reset
-          resetQueue();
-          break;
+      
+      if (userId) {
+        isAuthReady = true;
+        userIdDisplayEl.textContent = 'User ID: ' + userId;
+        console.log("Authenticated with user ID:", userId);
+        startFirestoreListeners();
+      } else {
+        authStatusEl.textContent = 'Authentication failed.';
       }
     });
 
-    // Initialize
-    updateDisplay();
-    updateClock();
+    function startFirestoreListeners() {
+      if (!db || !userId) return;
+
+      // Populate health center dropdown
+      healthCenterSelect.innerHTML = healthCenters.map(hc => `<option value="${escapeHtml(hc)}">${escapeHtml(hc)}</option>`).join('');
+
+      const draftRef = collection(db, 'artifacts', appId, 'users', userId, 'drafts');
+      const publishedRef = collection(db, 'artifacts', appId, 'users', userId, 'published');
+
+      // Drafts listener
+      unsubscribeDrafts = onSnapshot(draftRef, (snapshot) => {
+        const drafts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderDraftClients(drafts);
+      }, (error) => {
+        console.error("Error fetching drafts:", error);
+      });
+
+      // Published listener
+      unsubscribePublished = onSnapshot(publishedRef, (snapshot) => {
+        const published = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderPublished(published);
+      }, (error) => {
+        console.error("Error fetching published:", error);
+      });
+    }
+
+    // --- UI Rendering Functions ---
+
+    function renderDraftMeds() {
+      if (localDraftMedicines.length === 0) {
+        draftMedsContainer.innerHTML = '<div class="text-sm text-gray-500">No medicines added yet.</div>';
+        return;
+      }
+      draftMedsContainer.innerHTML = `
+        <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+          ${localDraftMedicines.map((m, i) => `
+            <li class="flex items-center justify-between">
+              <span>${escapeHtml(m.name)} — ${m.qty}</span>
+              <button data-i="${i}" class="text-red-500 hover:text-red-600 text-xs font-semibold" onclick="removeDraftMed(${i})">Remove</button>
+            </li>
+          `).join('')}
+        </ul>
+      `;
+    }
+
+    function renderDraftClients(drafts) {
+      if (drafts.length === 0) {
+        draftClientsEl.innerHTML = '<div class="text-sm text-gray-500">Loading drafts...</div>';
+        publishBtn.disabled = true;
+      } else {
+        draftClientsEl.innerHTML = drafts.map(d => `
+          <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+            <div class="flex items-center justify-between">
+              <p class="font-semibold text-gray-800">${escapeHtml(d.clientName)}</p>
+              <div class="flex gap-2">
+                <button onclick="deleteDraft('${d.id}')" class="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-1 px-2 rounded-full">Delete</button>
+              </div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Health Center: ${escapeHtml(d.healthCenter)}</p>
+            <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+              ${d.medicines.map(m => `<li>${escapeHtml(m.name)} — ${m.qty}</li>`).join('')}
+            </ul>
+          </div>
+        `).join('');
+        publishBtn.disabled = false;
+      }
+    }
+
+    function renderPublished(published) {
+      if (published.length === 0) {
+        publishedListEl.innerHTML = '<div class="text-sm text-gray-500">Loading published list...</div>';
+        downloadCsvBtn.disabled = true;
+        printBtn.disabled = true;
+      } else {
+        publishedListEl.innerHTML = published.map(p => {
+          const claimedStatus = p.claimed ? `<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Claimed</span>` : `<span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Not Claimed</span>`;
+          const lastClaimed = p.lastClaimedISO ? new Date(p.lastClaimedISO).toLocaleDateString() : 'N/A';
+          const isClaimedThisMonth = p.claimed && p.claimedMonth === new Date().getMonth();
+          const warningBadge = isClaimedThisMonth ? `<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Claimed this month</span>` : '';
+          
+          return `
+            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <p class="font-semibold text-gray-800">${escapeHtml(p.clientName)}</p>
+                  ${claimedStatus}
+                  ${warningBadge}
+                </div>
+                <p class="text-xs text-gray-500 mt-1">Health Center: ${escapeHtml(p.healthCenter || 'N/A')}</p>
+                <p class="text-xs text-gray-500 mt-1">Last Claimed: ${lastClaimed}</p>
+                <ul class="list-disc list-inside text-sm text-gray-600 mt-2">
+                  ${p.medicines.map(m => `<li>${escapeHtml(m.name)} — ${m.qty}</li>`).join('')}
+                </ul>
+              </div>
+              <div class="mt-4 sm:mt-0 flex flex-col sm:items-end gap-2 text-sm">
+                <div class="flex items-center gap-2">
+                  <label for="claimed-${p.id}" class="text-gray-600">Claimed</label>
+                  <input type="checkbox" id="claimed-${p.id}" data-id="${p.id}" ${p.claimed ? 'checked' : ''} class="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="editPublished('${p.id}')" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1 px-2 rounded-full">Edit</button>
+                  <button onclick="deletePublished('${p.id}')" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1 px-2 rounded-full">Delete</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        // Attach event listeners for checkboxes after rendering
+        publishedListEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+          cb.addEventListener('change', (e) => handleClaimToggle(cb.getAttribute('data-id'), e.target.checked));
+        });
+        downloadCsvBtn.disabled = false;
+        printBtn.disabled = false;
+      }
+    }
+
+    // --- Action Handlers ---
+
+    addMedBtn.addEventListener('click', () => {
+      const name = clientNameEl.value.trim();
+      const medName = medNameEl.value.trim();
+      const medQty = parseInt(medQtyEl.value, 10) || 0;
+      if (!name) {
+        showModal({ title: 'Error', message: 'Please enter a client name first.', type: 'alert' });
+        return;
+      }
+      if (!medName || medQty <= 0) {
+        showModal({ title: 'Error', message: 'Please enter a valid medicine name and quantity greater than 0.', type: 'alert' });
+        return;
+      }
+      localDraftMedicines.push({ name: medName, qty: medQty });
+      medNameEl.value = '';
+      medQtyEl.value = '1';
+      renderDraftMeds();
+    });
+
+    clearDraftBtn.addEventListener('click', async () => {
+      const confirmed = await showModal({ title: 'Clear Draft', message: 'Are you sure you want to clear the current medicine draft?', type: 'confirm' });
+      if (confirmed) {
+        localDraftMedicines = [];
+        clientNameEl.value = '';
+        renderDraftMeds();
+      }
+    });
+
+    saveClientBtn.addEventListener('click', async () => {
+      if (!isAuthReady) {
+        showModal({ title: 'Error', message: 'App is still authenticating. Please wait a moment.', type: 'alert' });
+        return;
+      }
+
+      const clientName = clientNameEl.value.trim();
+      const healthCenter = healthCenterSelect.value;
+      if (!clientName) {
+        showModal({ title: 'Error', message: 'Please enter a client name.', type: 'alert' });
+        return;
+      }
+      if (localDraftMedicines.length === 0) {
+        showModal({ title: 'Error', message: 'Add at least one medicine for this client.', type: 'alert' });
+        return;
+      }
+
+      const clientData = {
+        clientName,
+        healthCenter,
+        medicines: localDraftMedicines,
+        claimed: false,
+        claimedMonth: null,
+        lastClaimedISO: null,
+        createdAt: Timestamp.now()
+      };
+
+      try {
+        await addDoc(collection(db, 'artifacts', appId, 'users', userId, 'drafts'), clientData);
+        localDraftMedicines = [];
+        clientNameEl.value = '';
+        renderDraftMeds();
+        showModal({ title: 'Success', message: 'Client saved to drafts!', type: 'alert' });
+      } catch (e) {
+        console.error("Error saving client: ", e);
+        showModal({ title: 'Error', message: 'Failed to save client. See console for details.', type: 'alert' });
+      }
+    });
+
+    window.deleteDraft = async (id) => {
+      const confirmed = await showModal({ title: 'Delete Draft', message: 'Are you sure you want to delete this drafted client?', type: 'confirm' });
+      if (confirmed) {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'drafts', id));
+        } catch (e) {
+          console.error("Error deleting draft: ", e);
+          showModal({ title: 'Error', message: 'Failed to delete draft. See console for details.', type: 'alert' });
+        }
+      }
+    };
+
+    publishBtn.addEventListener('click', async () => {
+      if (!isAuthReady) {
+        showModal({ title: 'Error', message: 'App is still authenticating. Please wait a moment.', type: 'alert' });
+        return;
+      }
+      
+      const draftsRef = collection(db, 'artifacts', appId, 'users', userId, 'drafts');
+      const publishedRef = collection(db, 'artifacts', appId, 'users', userId, 'published');
+      
+      const q = query(draftsRef);
+      const querySnapshot = await getDocs(q);
+      
+      if (querySnapshot.empty) {
+        showModal({ title: 'Info', message: 'No drafts to publish.', type: 'alert' });
+        return;
+      }
+
+      try {
+        await runTransaction(db, async (transaction) => {
+          querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            transaction.set(doc(publishedRef, docSnap.id), data); // Move doc with same ID
+            transaction.delete(docSnap.ref); // Delete from drafts
+          });
+        });
+        showModal({ title: 'Success', message: `Published ${querySnapshot.size} client(s).`, type: 'alert' });
+      } catch (e) {
+        console.error("Transaction failed: ", e);
+        showModal({ title: 'Error', message: 'Failed to publish drafts. See console for details.', type: 'alert' });
+      }
+    });
+
+    window.handleClaimToggle = async (id, checked) => {
+      const publishedRef = doc(db, 'artifacts', appId, 'users', userId, 'published', id);
+      try {
+        const publishedDoc = await getDoc(publishedRef);
+        if (!publishedDoc.exists()) return;
+        
+        const client = publishedDoc.data();
+        const currentMonth = new Date().getMonth();
+        let confirmed = true;
+
+        if (checked) {
+          if (client.claimed && client.claimedMonth === currentMonth) {
+            showModal({ title: 'Warning', message: `${client.clientName} has already claimed medicines this month!`, type: 'alert' });
+            return; // Exit and let the UI listener revert the checkbox
+          }
+        } else {
+          confirmed = await showModal({ title: 'Unclaim', message: `Are you sure you want to mark ${client.clientName} as NOT claimed?`, type: 'confirm' });
+        }
+        
+        if (confirmed) {
+          const updateData = checked ? {
+            claimed: true,
+            claimedMonth: currentMonth,
+            lastClaimedISO: new Date().toISOString()
+          } : {
+            claimed: false,
+            claimedMonth: null,
+            lastClaimedISO: null
+          };
+          await updateDoc(publishedRef, updateData);
+        }
+
+      } catch (e) {
+        console.error("Error updating claim status: ", e);
+        showModal({ title: 'Error', message: 'Failed to update claim status. See console for details.', type: 'alert' });
+      }
+    };
+
+    window.editPublished = async (id) => {
+      const publishedRef = doc(db, 'artifacts', appId, 'users', userId, 'published', id);
+      const docSnap = await getDoc(publishedRef);
+      if (!docSnap.exists()) {
+        showModal({ title: 'Error', message: 'Record not found.', type: 'alert' });
+        return;
+      }
+
+      const p = docSnap.data();
+      const newName = prompt('Edit client name', p.clientName);
+      if (newName === null) return;
+      const updatedName = newName.trim() || p.clientName;
+
+      // Simple edit for medicines
+      const medText = p.medicines.map(m => `${m.name},${m.qty}`).join('\n');
+      const newMedText = prompt('Edit medicines (one per line as name,qty). Example:\nParacetamol,10', medText);
+      if (newMedText === null) return;
+      
+      const lines = newMedText.split('\n').map(l => l.trim()).filter(Boolean);
+      const meds = [];
+      for(const ln of lines){
+        const parts = ln.split(',').map(s => s.trim());
+        if(parts.length < 2) continue;
+        const name = parts[0];
+        const qty = parseInt(parts[1], 10) || 1;
+        meds.push({ name, qty });
+      }
+      
+      if (meds.length === 0) {
+        showModal({ title: 'Warning', message: 'No valid medicines entered; keeping previous medicines.', type: 'alert' });
+        return;
+      }
+
+      try {
+        await updateDoc(publishedRef, { clientName: updatedName, medicines: meds });
+        showModal({ title: 'Success', message: 'Client details updated.', type: 'alert' });
+      } catch (e) {
+        console.error("Error editing client:", e);
+        showModal({ title: 'Error', message: 'Failed to edit client. See console for details.', type: 'alert' });
+      }
+    };
+
+    window.deletePublished = async (id) => {
+      const confirmed = await showModal({ title: 'Delete Published', message: 'Are you sure you want to delete this published record?', type: 'confirm' });
+      if (confirmed) {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'published', id));
+        } catch (e) {
+          console.error("Error deleting published record: ", e);
+          showModal({ title: 'Error', message: 'Failed to delete record. See console for details.', type: 'alert' });
+        }
+      }
+    };
+
+    downloadCsvBtn.addEventListener('click', async () => {
+      if (!isAuthReady) return;
+      const publishedRef = collection(db, 'artifacts', appId, 'users', userId, 'published');
+      const querySnapshot = await getDocs(publishedRef);
+      
+      if (querySnapshot.empty) {
+        showModal({ title: 'Info', message: 'No published data to download.', type: 'alert' });
+        return;
+      }
+      
+      const lines = [];
+      lines.push(['Client Name', 'Health Center', 'Medicine', 'Quantity', 'Claimed', 'Last Claimed Date']);
+      querySnapshot.docs.forEach(doc => {
+        const p = doc.data();
+        p.medicines.forEach(m => {
+          lines.push([
+            p.clientName,
+            p.healthCenter || '',
+            m.name,
+            m.qty,
+            p.claimed ? 'Yes' : 'No',
+            p.lastClaimedISO ? new Date(p.lastClaimedISO).toLocaleString() : ''
+          ]);
+        });
+      });
+      const csv = lines.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'medicine_published_report.csv';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 5000);
+    });
+
+    printBtn.addEventListener('click', async () => {
+      if (!isAuthReady) return;
+      
+      const publishedRef = collection(db, 'artifacts', appId, 'users', userId, 'published');
+      const querySnapshot = await getDocs(publishedRef);
+      const published = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (published.length === 0) {
+        const confirmed = await showModal({ title: 'Print', message: 'Published list is empty. Do you want to print a blank report?', type: 'confirm' });
+        if (!confirmed) return;
+      }
+      
+      const html = buildReportHtml(published, { title: 'Medicine Published Report' });
+      const w = window.open('', '_blank');
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.print();
+    });
+
+    function buildReportHtml(published, opts = {}) {
+      const title = opts.title || 'Report';
+      const now = new Date().toLocaleString();
+      const rows = published.map(p => `
+        <tr>
+          <td style="padding:8px;border:1px solid #ddd; vertical-align:top;">${escapeHtml(p.clientName)}</td>
+          <td style="padding:8px;border:1px solid #ddd; vertical-align:top;">${escapeHtml(p.healthCenter || 'N/A')}</td>
+          <td style="padding:8px;border:1px solid #ddd; vertical-align:top;">${p.medicines.map(m => `${escapeHtml(m.name)} (${m.qty})`).join('<br>')}</td>
+          <td style="padding:8px;border:1px solid #ddd; vertical-align:top;">${p.claimed ? 'Yes' : 'No'}</td>
+          <td style="padding:8px;border:1px solid #ddd; vertical-align:top;">${p.lastClaimedISO ? new Date(p.lastClaimedISO).toLocaleString() : ''}</td>
+        </tr>
+      `).join('');
+
+      return `
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <title>${title}</title>
+            <style>
+              body { font-family: sans-serif; margin: 20px; color: #111; }
+              h1 { margin: 0 0 6px 0; }
+              table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background: #f3f4f6; }
+              .meta { color: #6b7280; font-size: 13px; }
+            </style>
+          </head>
+          <body>
+            <h1>${title}</h1>
+            <div class="meta">Generated: ${now}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Health Center</th>
+                  <th>Medicines (qty)</th>
+                  <th>Claimed</th>
+                  <th>Last Claimed</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `;
+    }
+
+    // Utility function
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
   </script>
 </body>
 </html>
