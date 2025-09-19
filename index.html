@@ -3,352 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>City Health Office</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-    body, html { height: 100%; width: 100%; }
-
-    /* Landing (Hero Section) */
-    .hero {
-      background: url("city-health-office.png") no-repeat center center/cover;
-      height: 100vh; width: 100%;
-      display: flex; justify-content: center; align-items: center;
-      position: relative;
-    }
-    .overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.2); }
-    .content { position: relative; text-align: center; color: #fff; z-index: 1; }
-    .content p { font-size: 14px; letter-spacing: 2px; margin-bottom: 10px; }
-    .content h1 { font-size: 70px; font-weight: bold; color: #fcd34d; margin-bottom: 30px; }
-    .buttons { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-    .buttons a {
-      display: inline-block; padding: 12px 40px;
-      background: white; color: black; text-decoration: none;
-      font-weight: bold; border-radius: 5px; transition: background 0.3s;
-      cursor: pointer;
-    }
-    .buttons a:hover { background: #ddd; }
-
-    /* Login Modal */
-    .login-modal {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 999;
-    }
-    .login-box {
-      background: white; padding: 30px; border-radius: 10px;
-      width: 300px; text-align: center; box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
-    }
-    .login-box h2 { margin-bottom: 20px; color: #333; }
-    .login-box input {
-      width: 100%; padding: 10px; margin: 10px 0;
-      border: 1px solid #ccc; border-radius: 5px;
-    }
-    .login-box button {
-      width: 100%; padding: 10px; background: #fcd34d; border: none;
-      border-radius: 5px; font-weight: bold; cursor: pointer;
-    }
-    .login-box button:hover { background: #eab308; }
-    .close-btn { margin-top: 10px; color: #555; font-size: 14px; cursor: pointer; text-decoration: underline; }
-
-    /* Appointment Page */
-    .appointment-page { display: none; background: #fff; min-height: 100vh; flex-direction: column; }
-    .navbar {
-      background: #6b6b6b; padding: 10px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .navbar img { height: 50px; }
-    .nav-links { display: flex; gap: 30px; }
-    .nav-links a { color: black; text-decoration: none; font-weight: bold; }
-    .nav-links a:hover { text-decoration: underline; }
-
-    /* Appointment Form */
-    .form-container {
-      max-width: 700px; margin: 30px auto; padding: 20px;
-      background: #f9f9f9; border-radius: 8px;
-      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    }
-    .form-container h2 { text-align: center; margin-bottom: 20px; color: #333; }
-    .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
-    .form-group label { margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-    .form-group input, .form-group select, .form-group textarea {
-      padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;
-    }
-    .form-row { display: flex; gap: 15px; }
-    .form-row .form-group { flex: 1; }
-    .form-container button {
-      width: 100%; padding: 12px;
-      background: #6b6b6b; color: white; border: none;
-      border-radius: 5px; font-weight: bold; cursor: pointer;
-      transition: background 0.3s;
-    }
-    .form-container button:hover { background: #555; }
-    .privacy-box {
-      font-size: 13px; color: #555; background: #f3f3f3;
-      padding: 10px; border-radius: 5px; margin-bottom: 15px;
-    }
-
-    /* Admin Page */
-    .admin-page { display: none; background: #fff; min-height: 100vh; padding: 20px; }
-    .admin-page h2 { text-align: center; margin-bottom: 20px; }
-    .filters { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; }
-    .filters input, .filters select { padding: 8px; border: 1px solid #ccc; border-radius: 5px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #6b6b6b; color: white; }
-    .actions button {
-      margin: 2px; padding: 5px 10px; border: none; border-radius: 4px;
-      cursor: pointer; font-size: 12px;
-    }
-    .approve-btn { background: #4caf50; color: white; }
-    .delete-btn { background: #e53935; color: white; }
-  </style>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
+  <title>City Health Office Queue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <!-- Landing -->
-  <div class="hero" id="landingPage">
-    <div class="overlay"></div>
-    <div class="content">
-      <p>WELCOME TO</p>
-      <h1>City Health Office</h1>
-      <div class="buttons">
-        <a onclick="openAppointment()">APPOINTMENT</a>
-        <a onclick="openLogin()">ADMIN USER</a>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+
+  <!-- Header -->
+  <div class="w-full bg-yellow-400 flex justify-between items-center px-6 py-3">
+    <div class="flex items-center space-x-2">
+      <img src="logo.png" alt="Logo" class="w-12 h-12">
+      <h1 class="text-3xl font-bold text-white">CITY HEALTH OFFICE</h1>
+    </div>
+    <div id="clock" class="text-lg font-bold text-gray-800"></div>
+  </div>
+
+  <!-- Main Queue Display -->
+  <div class="flex justify-center items-start w-full mt-8 space-x-12">
+
+    <!-- Available -->
+    <div class="bg-green-500 text-white text-center rounded-2xl px-6 py-6 w-40">
+      <h2 class="font-bold">AVAILABLE</h2>
+      <p id="available" class="text-3xl mt-2">0</p>
+    </div>
+
+    <!-- Now Serving -->
+    <div class="flex flex-col items-center">
+      <h2 class="font-bold text-xl">NOW SERVING</h2>
+      <div class="bg-green-500 text-white rounded-2xl flex items-center justify-center w-48 h-48 mt-2">
+        <p id="current" class="text-7xl font-bold">1</p>
+      </div>
+
+      <!-- Shortcut Legend -->
+      <div class="mt-6 text-sm text-gray-600 text-center">
+        <p><strong>Keyboard Shortcuts:</strong></p>
+        <p>N = Next | R = Recall | S = Skip | X = Reset</p>
       </div>
     </div>
-  </div>
 
-  <!-- Appointment Page -->
-  <div class="appointment-page" id="appointmentPage">
-    <div class="navbar">
-      <img src="logo.png" alt="City Health Logo">
-      <div class="nav-links">
-        <a href="#" onclick="backHome()">HOME</a>
-        <a href="#">SERVICES</a>
-        <a href="#">CONTACT</a>
-      </div>
+    <!-- Queue List -->
+    <div class="bg-green-500 text-white text-center rounded-2xl px-6 py-6 w-40">
+      <h2 class="font-bold">IN QUEUE</h2>
+      <ul id="queueList" class="mt-2 space-y-2 text-lg font-semibold">
+        <li>No. 2</li>
+        <li>No. 3</li>
+        <li>No. 4</li>
+        <li>No. 5</li>
+      </ul>
     </div>
-    <div class="form-container">
-      <h2>Book an Appointment</h2>
-      <form id="appointmentForm">
-        <div class="form-row">
-          <div class="form-group"><label>Surname</label><input type="text" id="surname" required></div>
-          <div class="form-group"><label>First Name</label><input type="text" id="firstname" required></div>
-          <div class="form-group"><label>Middle Initial</label><input type="text" id="middle"></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Age</label><input type="number" id="age" required></div>
-          <div class="form-group">
-            <label>Sex</label>
-            <select id="sex" required>
-              <option value="">Select</option><option>Male</option><option>Female</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group"><label>Email</label><input type="email" id="email" required></div>
-        <div class="form-group">
-          <label>Choose Health Center</label>
-          <select id="healthcenter" required>
-            <option value="">Select Health Center</option>
-            <option>Main Health Center</option>
-            <option>Barangay 1 Health Center</option>
-            <option>Barangay 2 Health Center</option>
-            <option>Barangay 3 Health Center</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>Date</label><input type="date" id="appointmentDate" required></div>
-          <div class="form-group"><label>Time</label><input type="time" id="appointmentTime" required></div>
-        </div>
-        <div class="form-group">
-          <label>Services</label>
-          <select id="services" required onchange="toggleOtherService(this.value)">
-            <option value="">Select Service</option>
-            <option>General Consultation</option>
-            <option>Vaccination</option>
-            <option>Health Certificate</option>
-            <option value="Other">Other (please specify)</option>
-          </select>
-        </div>
-        <div class="form-group" id="otherServiceGroup" style="display:none;">
-          <label>Specify Other Service</label>
-          <input type="text" id="otherService">
-        </div>
-        <div class="form-group"><label>Message</label><textarea id="message" rows="4"></textarea></div>
-        <div class="form-group privacy-box">
-          <input type="checkbox" id="privacyCheck" required>
-          <label for="privacyCheck">I have read and agree to the <b>Privacy Notice</b>. My data will be used only for appointments in compliance with the Data Privacy Act.</label>
-        </div>
-        <button type="submit">Submit Appointment</button>
-      </form>
-    </div>
-  </div>
 
-  <!-- Login Modal -->
-  <div class="login-modal" id="loginModal">
-    <div class="login-box">
-      <h2>Admin Login</h2>
-      <form onsubmit="event.preventDefault(); loginAdmin();">
-        <input type="text" id="adminUser" placeholder="Username" required>
-        <input type="password" id="adminPass" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-      <div class="close-btn" onclick="closeLogin()">Close</div>
-    </div>
-  </div>
-
-  <!-- Admin Page -->
-  <div class="admin-page" id="adminPage">
-    <h2>Appointment Queue</h2>
-    <div class="filters">
-      <input type="date" id="filterDate">
-      <select id="filterService">
-        <option value="">All Services</option>
-        <option>General Consultation</option>
-        <option>Vaccination</option>
-        <option>Health Certificate</option>
-        <option>Other</option>
-      </select>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th><th>Surname</th><th>First</th><th>Middle</th>
-          <th>Age</th><th>Sex</th><th>Email</th><th>Health Center</th>
-          <th>Service</th><th>Message</th><th>Status</th><th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="queueTable"></tbody>
-    </table>
-    <br>
-    <button onclick="backAdmin()">Back</button>
   </div>
 
   <script>
-    function openLogin(){ document.getElementById("loginModal").style.display = "flex"; }
-    function closeLogin(){ document.getElementById("loginModal").style.display = "none"; }
-    function openAppointment(){
-      document.getElementById("landingPage").style.display = "none";
-      document.getElementById("appointmentPage").style.display = "flex";
-    }
-    function backHome(){
-      document.getElementById("appointmentPage").style.display = "none";
-      document.getElementById("adminPage").style.display = "none";
-      document.getElementById("landingPage").style.display = "flex";
-    }
-    function backAdmin(){
-      document.getElementById("adminPage").style.display = "none";
-      document.getElementById("landingPage").style.display = "flex";
-    }
+    let current = 1;
+    let queue = [2, 3, 4, 5, 6, 7, 8];
+    let available = queue.length;
 
-    // No same-day appointment
-    let today = new Date();
-    today.setDate(today.getDate() + 1);
-    let minDate = today.toISOString().split("T")[0];
-    document.getElementById("appointmentDate").setAttribute("min", minDate);
+    // Update display
+    function updateDisplay() {
+      document.getElementById("current").innerText = current;
+      document.getElementById("available").innerText = available;
 
-    function toggleOtherService(val){
-      document.getElementById("otherServiceGroup").style.display = val === "Other" ? "block" : "none";
-    }
-
-    // Save Appointment
-    document.getElementById("appointmentForm").addEventListener("submit", async function(e){
-      e.preventDefault();
-      let service = document.getElementById("services").value;
-      if(service === "Other") service = document.getElementById("otherService").value;
-
-      let appointment = {
-        date: document.getElementById("appointmentDate").value,
-        time: document.getElementById("appointmentTime").value,
-        surname: document.getElementById("surname").value,
-        firstname: document.getElementById("firstname").value,
-        middle: document.getElementById("middle").value,
-        age: document.getElementById("age").value,
-        sex: document.getElementById("sex").value,
-        email: document.getElementById("email").value,
-        healthcenter: document.getElementById("healthcenter").value,
-        service: service,
-        message: document.getElementById("message").value,
-        status: "Pending",
-        createdAt: new Date()
-      };
-
-      try {
-        await db.collection("appointments").add(appointment);
-        alert("✅ Appointment Submitted!");
-        this.reset();
-        document.getElementById("appointmentDate").setAttribute("min", minDate);
-      } catch (err){ alert("❌ Failed to save appointment!"); console.error(err); }
-    });
-
-    // Admin login
-    function loginAdmin(){
-      let user = document.getElementById("adminUser").value;
-      let pass = document.getElementById("adminPass").value;
-      if(user === "admin" && pass === "1234"){
-        document.getElementById("loginModal").style.display = "none";
-        document.getElementById("landingPage").style.display = "none";
-        document.getElementById("adminPage").style.display = "block";
-      } else alert("Invalid Credentials!");
-    }
-
-    // Render appointments
-    db.collection("appointments").orderBy("createdAt", "desc").onSnapshot(snapshot=>{
-      let tbody = document.getElementById("queueTable");
-      tbody.innerHTML = "";
-      let fService = document.getElementById("filterService").value;
-      let fDate = document.getElementById("filterDate").value;
-
-      snapshot.forEach(doc=>{
-        let a = doc.data();
-        if((!fService || a.service === fService) && (!fDate || a.date === fDate)){
-          let row = `<tr>
-            <td>${a.date} ${a.time}</td>
-            <td>${a.surname}</td>
-            <td>${a.firstname}</td>
-            <td>${a.middle}</td>
-            <td>${a.age}</td>
-            <td>${a.sex}</td>
-            <td>${a.email}</td>
-            <td>${a.healthcenter}</td>
-            <td>${a.service}</td>
-            <td>${a.message}</td>
-            <td>${a.status}</td>
-            <td class="actions">
-              <button class="approve-btn" onclick="updateStatus('${doc.id}', 'Approved')">Approve</button>
-              <button class="delete-btn" onclick="deleteAppointment('${doc.id}')">Delete</button>
-            </td>
-          </tr>`;
-          tbody.innerHTML += row;
-        }
+      let list = document.getElementById("queueList");
+      list.innerHTML = "";
+      queue.slice(0, 5).forEach(num => {
+        let li = document.createElement("li");
+        li.innerText = "No. " + num;
+        list.appendChild(li);
       });
-    });
-
-    async function updateStatus(id, status){
-      await db.collection("appointments").doc(id).update({status: status});
-      alert("✅ Status updated to " + status);
     }
-    async function deleteAppointment(id){
-      if(confirm("Are you sure you want to delete this appointment?")){
-        await db.collection("appointments").doc(id).delete();
-        alert("🗑 Appointment deleted");
+
+    // Next Number
+    function nextNumber() {
+      if (queue.length > 0) {
+        current = queue.shift();
+        available = queue.length;
+        updateDisplay();
       }
     }
+
+    // Recall Number
+    function recallNumber() {
+      alert("Recalling No. " + current);
+    }
+
+    // Skip Number
+    function skipNumber() {
+      if (queue.length > 0) {
+        queue.push(current);
+        current = queue.shift();
+        available = queue.length;
+        updateDisplay();
+      }
+    }
+
+    // Reset Queue
+    function resetQueue() {
+      current = 1;
+      queue = [2, 3, 4, 5, 6, 7, 8];
+      available = queue.length;
+      updateDisplay();
+    }
+
+    // Clock
+    function updateClock() {
+      let now = new Date();
+      document.getElementById("clock").innerText =
+        now.toLocaleDateString() + " " + now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+
+    // Keyboard Shortcuts
+    document.addEventListener("keydown", function(event) {
+      switch(event.key.toLowerCase()) {
+        case "n": // Next
+          nextNumber();
+          break;
+        case "r": // Recall
+          recallNumber();
+          break;
+        case "s": // Skip
+          skipNumber();
+          break;
+        case "x": // Reset
+          resetQueue();
+          break;
+      }
+    });
+
+    // Initialize
+    updateDisplay();
+    updateClock();
   </script>
 </body>
 </html>
